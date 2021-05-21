@@ -19,12 +19,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	int y = 100;
 
 	//int gHandle = LoadGraph("Asset/Adventurer-1.5/Individual Sprites/adventurer-run-00.png");
-	int gHandle[6] = {};
-
-	for (int i = 0; i < 6; i++)
-	{
-
-	}
+	//int gHandle[6] = {};
 
 	while (ProcessMessage() == 0)
 	{
@@ -49,7 +44,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		DrawBox(x, y, x + 100, y + 100, 0xffffff, false);
 		DrawString(610, 355, "Hello, World!", 0xffffff);
-		DrawRotaGraph(x, y, 4.0, 0.0, gHandle, true, false);
+		//DrawRotaGraph(x, y, 4.0, 0.0, gHandle, true, false);
 
 		ScreenFlip();
 	}
