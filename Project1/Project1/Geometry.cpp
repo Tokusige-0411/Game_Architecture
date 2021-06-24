@@ -24,6 +24,16 @@ Vector2::operator*(float scale) {
 	return Vector2(x * scale, y * scale);
 }
 
+bool Vector2::operator==(const Vector2& v)
+{
+	return (x == v.x && y == v.y);
+}
+
+bool Vector2::operator!=(const Vector2& v)
+{
+	return !(x == v.x && y == v.y);
+}
+
 Vector2 operator+(const Vector2& va, const Vector2 vb) {
 	return Vector2(va.x + vb.x, va.y + vb.y);
 }

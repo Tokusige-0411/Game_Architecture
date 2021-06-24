@@ -32,6 +32,9 @@ struct Vector2 {
 	static const Vector2 Zero(){
 		return { 0.0f, 0.0f };
 	}
+
+	bool operator==(const Vector2& v);
+	bool operator!=(const Vector2& v);
 };
 
 Vector2 operator+(const Vector2& va, const Vector2 vb);
