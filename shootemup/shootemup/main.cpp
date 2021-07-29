@@ -1,0 +1,212 @@
+#include<DxLib.h>
+#include<cmath>
+#include"Geometry.h"
+
+///“–‚½‚è”»’èŠÖ”
+///@param posA A‚ÌÀ•W
+///@param radiusA A‚Ì”¼Œa
+///@param posB B‚ÌÀ•W
+///@param radiusB B‚Ì”¼Œa
+bool IsHit(const Position2& posA, float radiusA, const Position2& posB,  float radiusB) {
+	//“–‚½‚è”»’è‚ğÀ‘•‚µ‚Ä‚­‚¾‚³‚¢
+	return false;
+}
+
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+	ChangeWindowMode(true);
+	SetMainWindowText("’e–‹‚¾‚æ`");
+	if (DxLib_Init() != 0) {
+		return -1;
+	}
+	SetDrawScreen(DX_SCREEN_BACK);
+
+	//”wŒi—p
+	int bgH[4];
+	LoadDivGraph("img/bganim.png", 4, 4, 1, 256, 192, bgH);
+
+	int skyH = LoadGraph("img/sky.png");
+	int sky2H = LoadGraph("img/sky2.png");
+
+	auto bulletH=LoadGraph("img/bullet.png");
+	int playerH[10];
+	LoadDivGraph("img/player.png", 10, 5, 2, 16, 24,playerH );
+
+	int enemyH[2];
+	LoadDivGraph("img/enemy.png", 2, 2, 1, 32, 32, enemyH);
+
+	struct Bullet {
+		Position2 pos;//À•W
+		Vector2 vel;//‘¬“x
+		bool isActive = false;//¶‚«‚Ä‚é‚©`H
+	};
+
+	//’e‚Ì”¼Œa
+	float bulletRadius = 5.0f;
+
+	//©‹@‚Ì”¼Œa
+	float playerRadius = 10.0f;
+
+	//“K“–‚É256ŒÂ‚­‚ç‚¢ì‚Á‚Æ‚­
+	Bullet bullets[256];
+
+	Bullet hBullets[8];
+	Vector2 shootVel = { 5.0f, 0.0f };
+
+	Position2 enemypos(320,25);//“GÀ•W
+	Position2 playerpos(320, 400);//©‹@À•W
+
+	unsigned int frame = 0;//ƒtƒŒ[ƒ€ŠÇ——p
+
+	char keystate[256];
+	bool oldShootKey = false;
+
+	bool isDebugMode = false;
+	int skyy = 0;
+	int skyy2 = 0;
+	int bgidx = 0;
+	while (ProcessMessage() == 0) {
+		ClearDrawScreen();
+
+		GetHitKeyStateAll(keystate);
+
+		isDebugMode = keystate[KEY_INPUT_P];
+
+		//”wŒi
+		DrawExtendGraph(0, 0, 640, 480, bgH[bgidx / 8], false);
+		bgidx = (bgidx + 1) % 32;
+
+		//SetDrawBlendMode(DX_BLENDMODE_ADD, 255);
+		skyy = (skyy + 1) % 480;
+		skyy2 = (skyy2 + 2) % 480;
+		DrawExtendGraph(0, skyy, 640, skyy + 480, skyH, true);
+		DrawExtendGraph(0, skyy - 480, 640, skyy, skyH, true);
+		DrawExtendGraph(0, skyy2, 640, skyy2 + 480, sky2H, true);
+		DrawExtendGraph(0, skyy2 - 480, 640, skyy2, sky2H, true);
+
+
+		//ƒvƒŒƒCƒ„[
+		if (keystate[KEY_INPUT_RIGHT]) {
+			playerpos.x = min(640,playerpos.x+4);
+		}
+		else if (keystate[KEY_INPUT_LEFT]) {
+			playerpos.x = max(0,playerpos.x-4);
+		}
+		if (keystate[KEY_INPUT_UP]) {
+			playerpos.y = max(0,playerpos.y-4);
+		}else if (keystate[KEY_INPUT_DOWN]) {
+			playerpos.y = min(480,playerpos.y+4);
+		}
+
+		// ’e”­Ë
+		if (keystate[KEY_INPUT_Z] && !oldShootKey)
+		{
+			for (auto& data : hBullets)
+			{
+				if (!data.isActive)
+				{
+					data.isActive = true;
+					data.pos = playerpos;
+					data.vel = shootVel;
+					shootVel *= -1.0f;
+					break;
+				}
+			}
+		}
+		oldShootKey = keystate[KEY_INPUT_Z];
+
+		int pidx = (frame/4 % 2)*5+3;
+		DrawRotaGraph(playerpos.x, playerpos.y, 2.0f, 0.0f, playerH[pidx], true);
+		if (isDebugMode) {
+			//©‹@‚Ì–{‘Ì(“–‚½‚è”»’è)
+			DrawCircle(playerpos.x, playerpos.y, playerRadius, 0xffaaaa, false, 3);
+		}
+
+		// ’e§Œä
+		for (auto& data : hBullets)
+		{
+			auto eVec = (enemypos - data.pos).Normalized();
+			auto nVec = data.vel.Normalized();
+
+			auto angle = acosf(Dot(eVec, nVec));
+
+			// ’eˆÚ“®
+			if (data.isActive)
+			{
+				data.pos += data.vel;
+			}
+			//’e‚ğE‚·
+			if (data.pos.x + 16 < 0 || data.pos.x - 16 > 640 ||
+				data.pos.y + 24 < 0 || data.pos.y - 24 > 480) 
+			{
+				data.isActive = false;
+			}
+		}
+
+		// ’e•`‰æ
+		for (auto& data : hBullets)
+		{
+			if (data.isActive)
+			{
+				DrawCircleAA(data.pos.x, data.pos.y, 10.0f, 32, 0xff0000);
+			}
+		}
+
+		//’e”­Ë
+		if (frame % 12 == 0) {
+			for (auto& b : bullets) {
+				if (!b.isActive) {
+					//b.pos = enemypos;
+					//b.vel = Vector2(0, 5);
+					//b.isActive = true;
+					break;
+				}
+			}
+		}
+
+		//’e‚ÌXV‚¨‚æ‚Ñ•\¦
+		for (auto& b : bullets) {
+			if (!b.isActive) {
+				continue;
+			}
+
+			//’e‚ÌŒ»İÀ•W‚É’e‚ÌŒ»İ‘¬“x‚ğ‰ÁZ‚µ‚Ä‚­‚¾‚³‚¢
+			
+			float angle = 0.0f;
+			//’e‚ÌŠp“x‚ğatan2‚ÅŒvZ‚µ‚Ä‚­‚¾‚³‚¢Bangle‚É’l‚ğ“ü‚ê‚é‚ñ‚¾‚æƒIƒD
+			
+			DrawRotaGraph(b.pos.x, b.pos.y,1.0f,angle, bulletH, true);
+			
+			if (isDebugMode) {
+				//’e‚Ì–{‘Ì(“–‚½‚è”»’è)
+				DrawCircle(b.pos.x, b.pos.y, bulletRadius, 0x0000ff, false, 3);
+			}
+			//’e‚ğE‚·
+			if (b.pos.x + 16 < 0 || b.pos.x - 16 > 640 ||
+				b.pos.y + 24 < 0 || b.pos.y - 24 > 480) {
+				b.isActive = false;
+			}
+
+			//‚ ‚½‚èI
+			//«‚ÌIsHit‚ÍÀ‘•‚ğ‘‚¢‚Ä‚Ü‚¹‚ñB©•ª‚Å‘‚¢‚Ä‚­‚¾‚³‚¢B
+			if (IsHit(b.pos, bulletRadius, playerpos, playerRadius)) {
+				//“–‚½‚Á‚½”½‰‚ğ‘‚¢‚Ä‚­‚¾‚³‚¢B
+			}
+		}
+
+		//“G‚Ì•\¦
+		enemypos.x = abs((int)((frame+320) % 1280) - 640);
+		int eidx = (frame / 4 % 2);
+		DrawRotaGraph(enemypos.x, enemypos.y, 2.0f, 0.0f, enemyH[eidx],true);
+
+		if (isDebugMode) {
+			//“G‚Ì–{‘Ì(“–‚½‚è”»’è)
+			DrawCircle(enemypos.x, enemypos.y, 5, 0xffffff, false, 3);
+		}
+		++frame;
+		ScreenFlip();
+	}
+
+	DxLib_End();
+
+	return 0;
+}
