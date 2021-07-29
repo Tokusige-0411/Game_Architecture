@@ -128,6 +128,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// ’eˆÚ“®
 			if (data.isActive)
 			{
+
 				auto eVec = (enemypos - data.pos).Normalized();
 				data.vel = (data.vel + eVec).Normalized() * homing_shot_speed;
 				data.pos += data.vel;
