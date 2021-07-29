@@ -34,12 +34,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int enemyH[2];
 	LoadDivGraph("img/enemy.png", 2, 2, 1, 32, 32, enemyH);
 
-	struct Bullet {
-		Position2 pos;//À•W
-		Vector2 vel;//‘¬“x
-		bool isActive = false;//¶‚«‚Ä‚é‚©`H
-	};
-
 	//’e‚Ì”¼Œa
 	float bulletRadius = 5.0f;
 
