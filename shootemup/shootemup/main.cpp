@@ -50,7 +50,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Bullet bullets[256];
 
 	Bullet hBullets[8];
-	Vector2 shootVel = { 5.0f, 0.0f };
+	Vector2 shootVel = { 1000.0f, 0.0f };
+	constexpr float homing_shot_speed = 5.0f;
 
 	Position2 enemypos(320,25);//ìGç¿ïW
 	Position2 playerpos(320, 400);//é©ã@ç¿ïW
@@ -124,14 +125,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// íeêßå‰
 		for (auto& data : hBullets)
 		{
-			auto eVec = (enemypos - data.pos).Normalized();
-			auto nVec = data.vel.Normalized();
-
-			auto angle = acosf(Dot(eVec, nVec));
-
 			// íeà⁄ìÆ
 			if (data.isActive)
 			{
+				auto eVec = (enemypos - data.pos).Normalized();
+				data.vel = (data.vel + eVec).Normalized() * homing_shot_speed;
 				data.pos += data.vel;
 			}
 			//íeÇéEÇ∑
