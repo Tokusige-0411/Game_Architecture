@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Bullet bullets[256];
 
 	Bullet hBullets[8];
-	Vector2 shootVel = { 1000.0f, 0.0f };
+	Vector2 shootVel = { 500.0f, 500.0f };
 	constexpr float homing_shot_speed = 5.0f;
 
 	Position2 enemypos(320,25);//ìGç¿ïW
