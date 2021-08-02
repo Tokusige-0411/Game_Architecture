@@ -1,6 +1,7 @@
 #include<DxLib.h>
 #include<cmath>
 #include"Geometry.h"
+#include"HomingShot.h"
 
 ///ìñÇΩÇËîªíËä÷êî
 ///@param posA AÇÃç¿ïW
@@ -8,13 +9,13 @@
 ///@param posB BÇÃç¿ïW
 ///@param radiusB BÇÃîºåa
 bool IsHit(const Position2& posA, float radiusA, const Position2& posB,  float radiusB) {
-	//ìñÇΩÇËîªíËÇé¿ëïÇµÇƒÇ≠ÇæÇ≥Ç¢
-	return false;
+	Vector2 vec = { posA.x - posB.x, posA.y - posB.y };
+	return (radiusA + radiusB) > vec.Magnitude();
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ChangeWindowMode(true);
-	SetMainWindowText("íeñãÇæÇÊÅ`");
+	SetMainWindowText("1916027_ìøèdå’ëÂòN");
 	if (DxLib_Init() != 0) {
 		return -1;
 	}
@@ -43,7 +44,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//ìKìñÇ…256å¬Ç≠ÇÁÇ¢çÏÇ¡Ç∆Ç≠
 	Bullet bullets[256];
 
-	Bullet hBullets[8];
+	HomingShot hBullets[8];
 	Vector2 shootVel = { 5.0f, 5.0f };
 	constexpr float homing_shot_speed = 5.0f;
 	int hCount = 0;
@@ -104,6 +105,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					data.pos = playerpos;
 					data.vel = shootVel;
 					shootVel *= -1.0f;
+					data.trail.Reset();
 					break;
 				}
 			}
@@ -121,33 +123,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		for (auto& data : hBullets)
 		{
 			// íeà⁄ìÆ
-			if (data.isActive)
+			if (!data.isActive)
 			{
-				if (hCount % 3 == 0)
-				{
-					auto eVec = (enemypos - data.pos).Normalized();
-					data.vel = (data.vel + eVec).Normalized() * homing_shot_speed;
-				}
-
-				data.pos += data.vel;
+				continue;
 			}
+			if (hCount % 3 == 0)
+			{
+				data.vel = (data.vel + (enemypos - data.pos).Normalized()).Normalized() * homing_shot_speed;
+			}
+
+			data.pos += data.vel;
+
+			data.trail.Update();
 			//íeÇéEÇ∑
 			if (data.pos.x + 16 < 0 || data.pos.x - 16 > 640 ||
 				data.pos.y + 24 < 0 || data.pos.y - 24 > 480) 
 			{
 				data.isActive = false;
 			}
+			if (IsHit(enemypos, 5, data.pos, 32))
+			{
+				data.isActive = false;
+			}
+
+			data.trail.Draw();
+			DrawCircleAA(data.pos.x, data.pos.y, 10.0f, 32, 0xff0000);
+
 		}
 		hCount++;
-
-		// íeï`âÊ
-		for (auto& data : hBullets)
-		{
-			if (data.isActive)
-			{
-				DrawCircleAA(data.pos.x, data.pos.y, 10.0f, 32, 0xff0000);
-			}
-		}
 
 		//íeî≠éÀ
 		if (frame % 12 == 0) {

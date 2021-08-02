@@ -32,6 +32,7 @@ struct Vector2 {
 
 Vector2 operator+(const Vector2& va, const Vector2 vb);
 Vector2 operator-(const Vector2& va, const Vector2 vb);
+bool operator==(const Vector2& va, const Vector2 vb);
 
 ///“àÏ‚ğ•Ô‚·
 float Dot(const Vector2& va, const Vector2& vb);

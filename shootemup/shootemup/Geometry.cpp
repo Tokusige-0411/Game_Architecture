@@ -32,6 +32,11 @@ Vector2 operator-(const Vector2& va, const Vector2 vb){
 	return Vector2(va.x - vb.x, va.y - vb.y);
 }
 
+bool operator==(const Vector2& va, const Vector2 vb)
+{
+	return ((va.x == vb.x) && (va.y == vb.y));
+}
+
 float
 Vector2::Magnitude()const {
 	return hypot(x, y);
