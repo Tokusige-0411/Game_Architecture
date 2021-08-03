@@ -4,12 +4,12 @@
 
 namespace
 {
-	constexpr size_t history_limit = 20;
+	constexpr size_t history_limit = 30;
 }
 
 Trail::Trail(HomingShot& owner):owner_(owner)
 {
-	homingH = LoadGraph("img/arrow2.png");
+	handle_ = LoadGraph("img/arrow2.png");
 }
 
 void Trail::Update(void)
@@ -28,7 +28,7 @@ void Trail::Draw(void)
 	float div = 1.0f / static_cast<float>(history_limit);
 	float u = 0.0f;
 
-	for (auto& pos : history_)
+	for (const auto& pos : history_)
 	{
 		if (lastPos == pos)continue;
 		DrawLineAA(lastPos.x, lastPos.y, pos.x, pos.y, 0xffffff, thickness);
@@ -49,8 +49,11 @@ void Trail::Draw(void)
 			p4.x, p4.y,
 			u * 256, 0,
 			div * 256, 64,
-			homingH, true
+			handle_, true
 		);
+
+		DrawPolygonIndexed2D();
+
 		u += div;
 		lastPos = pos;
 	}

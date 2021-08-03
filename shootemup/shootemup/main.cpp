@@ -104,7 +104,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					data.isActive = true;
 					data.pos = playerpos;
 					data.vel = shootVel;
-					shootVel *= -1.0f;
+					shootVel.x *= -1.0f;
 					data.trail.Reset();
 					break;
 				}
@@ -135,6 +135,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			data.pos += data.vel;
 
 			data.trail.Update();
+
 			//’e‚ðŽE‚·
 			if (data.pos.x + 16 < 0 || data.pos.x - 16 > 640 ||
 				data.pos.y + 24 < 0 || data.pos.y - 24 > 480) 
@@ -204,6 +205,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawCircle(enemypos.x, enemypos.y, 5, 0xffffff, false, 3);
 		}
 		++frame;
+
+		int call = GetDrawCallCount();
+		DrawFormatString(20, 20, 0xffffff, "DrawCall::%d", call);
+
 		ScreenFlip();
 	}
 

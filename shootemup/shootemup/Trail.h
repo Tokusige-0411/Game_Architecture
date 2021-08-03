@@ -15,6 +15,6 @@ public:
 private:
 	HomingShot& owner_;
 	std::list<Position2> history_;
-	int homingH;
+	int handle_;
 };
 
