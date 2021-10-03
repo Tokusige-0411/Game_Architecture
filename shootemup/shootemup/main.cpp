@@ -1,7 +1,10 @@
 #include<DxLib.h>
 #include<cmath>
+#include<vector>
+#include<memory>
 #include"Geometry.h"
 #include"HomingShot.h"
+#include"ParticleSystem.h"
 
 ///“–‚½‚è”»’èŠÖ”
 ///@param posA A‚ÌÀ•W
@@ -42,9 +45,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float playerRadius = 10.0f;
 
 	//“K“–‚É256ŒÂ‚­‚ç‚¢ì‚Á‚Æ‚­
-	Bullet bullets[256];
+	//Bullet bullets[256];
 
-	HomingShot hBullets[8];
+	//HomingShot hBullets[8];
+	//ParticleSystem ps;
+	std::vector<std::unique_ptr<ParticleSystem>> psVec;
+
 	Vector2 shootVel = { 5.0f, 5.0f };
 	constexpr float homing_shot_speed = 5.0f;
 	int hCount = 0;
@@ -97,20 +103,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ’e”­Ë
 		if (keystate[KEY_INPUT_Z] && !oldShootKey)
 		{
-			for (auto& data : hBullets)
-			{
-				if (!data.isActive)
-				{
-					data.isActive = true;
-					data.pos = playerpos;
-					data.vel = shootVel;
-					shootVel.x *= -1.0f;
-					data.trail.Reset();
-					break;
-				}
-			}
+			auto a = std::make_unique<ParticleSystem>();
+			a->Emit(1, playerpos, shootVel);
+			psVec.push_back(std::move(a));
+			shootVel.x *= -1;
 		}
 		oldShootKey = keystate[KEY_INPUT_Z];
+
+		for (const auto& ps : psVec)
+		{
+			if (ps->IsTerminated())
+			{
+				ps->ClearParticles();
+			}
+			ps->Draw(enemypos);
+		}
 
 		int pidx = (frame/4 % 2)*5+3;
 		DrawRotaGraph(playerpos.x, playerpos.y, 2.0f, 0.0f, playerH[pidx], true);
@@ -119,81 +126,39 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			DrawCircle(playerpos.x, playerpos.y, playerRadius, 0xffaaaa, false, 3);
 		}
 
-		// ’e§Œä
-		for (auto& data : hBullets)
-		{
-			// ’eˆÚ“®
-			if (!data.isActive)
-			{
-				continue;
-			}
-			if (hCount % 3 == 0)
-			{
-				data.vel = (data.vel + (enemypos - data.pos).Normalized()).Normalized() * homing_shot_speed;
-			}
+		//// ’e§Œä
+		//for (auto& data : hBullets)
+		//{
+		//	// ’eˆÚ“®
+		//	if (!data.isActive)
+		//	{
+		//		continue;
+		//	}
+		//	if (hCount % 3 == 0)
+		//	{
+		//		data.vel = (data.vel + (enemypos - data.pos).Normalized()).Normalized() * homing_shot_speed;
+		//	}
 
-			data.pos += data.vel;
+		//	data.pos += data.vel;
 
-			data.trail.Update();
+		//	data.trail.Update();
 
-			//’e‚ğE‚·
-			if (data.pos.x + 16 < 0 || data.pos.x - 16 > 640 ||
-				data.pos.y + 24 < 0 || data.pos.y - 24 > 480) 
-			{
-				data.isActive = false;
-			}
-			if (IsHit(enemypos, 5, data.pos, 32))
-			{
-				data.isActive = false;
-			}
+		//	//’e‚ğE‚·
+		//	if (data.pos.x + 16 < 0 || data.pos.x - 16 > 640 ||
+		//		data.pos.y + 24 < 0 || data.pos.y - 24 > 480) 
+		//	{
+		//		data.isActive = false;
+		//	}
+		//	if (IsHit(enemypos, 5, data.pos, 32))
+		//	{
+		//		data.isActive = false;
+		//	}
 
-			data.trail.Draw();
-			DrawCircleAA(data.pos.x, data.pos.y, 10.0f, 32, 0xff0000);
+		//	data.trail.Draw();
+		//	DrawCircleAA(data.pos.x, data.pos.y, 10.0f, 32, 0xff0000);
 
-		}
-		hCount++;
-
-		//’e”­Ë
-		if (frame % 12 == 0) {
-			for (auto& b : bullets) {
-				if (!b.isActive) {
-					//b.pos = enemypos;
-					//b.vel = Vector2(0, 5);
-					//b.isActive = true;
-					break;
-				}
-			}
-		}
-
-		//’e‚ÌXV‚¨‚æ‚Ñ•\¦
-		for (auto& b : bullets) {
-			if (!b.isActive) {
-				continue;
-			}
-
-			//’e‚ÌŒ»İÀ•W‚É’e‚ÌŒ»İ‘¬“x‚ğ‰ÁZ‚µ‚Ä‚­‚¾‚³‚¢
-			
-			float angle = 0.0f;
-			//’e‚ÌŠp“x‚ğatan2‚ÅŒvZ‚µ‚Ä‚­‚¾‚³‚¢Bangle‚É’l‚ğ“ü‚ê‚é‚ñ‚¾‚æƒIƒD
-			
-			DrawRotaGraph(b.pos.x, b.pos.y,1.0f,angle, bulletH, true);
-			
-			if (isDebugMode) {
-				//’e‚Ì–{‘Ì(“–‚½‚è”»’è)
-				DrawCircle(b.pos.x, b.pos.y, bulletRadius, 0x0000ff, false, 3);
-			}
-			//’e‚ğE‚·
-			if (b.pos.x + 16 < 0 || b.pos.x - 16 > 640 ||
-				b.pos.y + 24 < 0 || b.pos.y - 24 > 480) {
-				b.isActive = false;
-			}
-
-			//‚ ‚½‚èI
-			//«‚ÌIsHit‚ÍÀ‘•‚ğ‘‚¢‚Ä‚Ü‚¹‚ñB©•ª‚Å‘‚¢‚Ä‚­‚¾‚³‚¢B
-			if (IsHit(b.pos, bulletRadius, playerpos, playerRadius)) {
-				//“–‚½‚Á‚½”½‰‚ğ‘‚¢‚Ä‚­‚¾‚³‚¢B
-			}
-		}
+		//}
+		//hCount++;
 
 		//“G‚Ì•\¦
 		enemypos.x = abs((int)((frame+320) % 1280) - 640);

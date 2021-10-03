@@ -3,9 +3,12 @@
 #include "Geometry.h"
 
 struct HomingShot;
+class ParticleSystem;
 
 class Trail
 {
+	friend ParticleSystem;
+
 public:
 	Trail(HomingShot& owner);
 	void Update(void);

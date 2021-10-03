@@ -24,10 +24,15 @@ struct Vector2 {
 	void operator+=(const Vector2& v);
 	void operator-=(const Vector2& v);
 	void operator*=(float scale);
+
+	bool operator!=(const Vector2& v);
+
 	Vector2 operator*(float scale);
 	Vector2 operator-() {
 		return Vector2(-x, -y);
 	}
+
+	static const Vector2 Zero;
 };
 
 Vector2 operator+(const Vector2& va, const Vector2 vb);

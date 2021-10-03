@@ -19,6 +19,11 @@ Vector2::operator*=(float scale) {
 	y *= scale;
 }
 
+bool Vector2::operator!=(const Vector2& v)
+{
+	return x != v.x || y != v.y;;
+}
+
 Vector2
 Vector2::operator*(float scale) {
 	return Vector2(x * scale, y * scale);
@@ -56,6 +61,8 @@ Vector2::Normalized() {
 	float mag = Magnitude();
 	return Vector2(x / mag,	y /mag);
 }
+
+const Vector2 Vector2::Zero = { 0.0f,0.0f };
 
 
 ///ì‡êœÇï‘Ç∑
