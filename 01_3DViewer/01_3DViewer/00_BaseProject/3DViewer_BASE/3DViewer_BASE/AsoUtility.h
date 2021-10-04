@@ -19,6 +19,7 @@ public:
 
 	// 0～360度の範囲に収める
 	static double DegIn360(double deg);
+	static float DegIn360(float deg);
 
 	// 0(0)～2π(360度)の範囲に収める
 	static double RadIn2PI(double rad);
@@ -38,6 +39,7 @@ public:
 	// 角度の線形補間
 	static VECTOR RotXZPos(VECTOR centerPos, VECTOR radiusPos, double rad);
 
+	
 	static double Magnitude(VECTOR v);
 	static double Distance(VECTOR v1, VECTOR v2);
 

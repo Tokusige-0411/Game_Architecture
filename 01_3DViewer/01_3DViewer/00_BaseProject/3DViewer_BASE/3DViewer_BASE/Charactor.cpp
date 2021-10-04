@@ -39,7 +39,7 @@ void Charactor::Update(void)
 	auto move = [&](int key, float rotRad) {
 		if (CheckHitKey(key))
 		{
-			auto camera = mSceneManager->GetCamera()->GetAngles();
+			auto& camera = mSceneManager->GetCamera()->GetAngles();
 			rotRad += camera.y;
 
 			// ƒJƒƒ‰‚ÌŒü‚«‚É‰ñ“]
@@ -76,4 +76,14 @@ void Charactor::Update(void)
 void Charactor::Draw(void)
 {
 	MV1DrawModel(modelID_);
+}
+
+const VECTOR& Charactor::GetPos(void)
+{
+	return pos_;
+}
+
+const VECTOR& Charactor::GetAngles(void)
+{
+	return angles_;
 }

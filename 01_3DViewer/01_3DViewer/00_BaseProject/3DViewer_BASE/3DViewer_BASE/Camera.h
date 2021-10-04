@@ -1,6 +1,8 @@
 #pragma once
 #include <DxLib.h>
 
+class Charactor;
+
 class Camera
 {
 public:
@@ -15,9 +17,15 @@ public:
 	const VECTOR& GetPos(void)const;
 	const VECTOR& GetAngles(void)const;
 
+	void SetUnit(Charactor* chara);
+	void SetTarget(const VECTOR& target);
+
 private:
 	VECTOR pos_;
 	VECTOR angles_;
+
+	Charactor* chara_;
+	VECTOR target_;
 	float speed_;
 };
 

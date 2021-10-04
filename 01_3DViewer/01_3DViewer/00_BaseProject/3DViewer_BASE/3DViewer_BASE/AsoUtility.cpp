@@ -68,6 +68,16 @@ double AsoUtility::DegIn360(double deg)
 
 }
 
+float AsoUtility::DegIn360(float deg)
+{
+    deg = fmodf(deg, 360.0f);
+    if (deg < 0.0f)
+    {
+        deg += 360.0f;
+    }
+    return deg;
+}
+
 double AsoUtility::RadIn2PI(double rad)
 {
 

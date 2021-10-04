@@ -12,6 +12,9 @@ public:
 	void Update(void);
 	void Draw(void);
 
+	const VECTOR& GetPos(void);
+	const VECTOR& GetAngles(void);
+
 private:
 	SceneManager* mSceneManager;
 

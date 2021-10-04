@@ -17,10 +17,10 @@ void SceneManager::Init()
 	mFader = new Fader();
 	mFader->Init();
 
+	mCamera = std::make_shared<Camera>();
+
 	mScene = new TitleScene(this);
 	mScene->Init();
-
-	mCamera = std::make_shared<Camera>();
 
 	mMiniCamera = new MiniCamera(mCamera.get());
 	mMiniCamera->Init();
