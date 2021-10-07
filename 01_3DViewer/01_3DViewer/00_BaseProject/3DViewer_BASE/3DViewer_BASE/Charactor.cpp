@@ -44,7 +44,7 @@ void Charactor::Update(void)
 
 			// ƒJƒƒ‰‚ÌŒü‚«‚É‰ñ“]
 			auto diff = AsoUtility::RadIn2PI(rotRad) - AsoUtility::RadIn2PI(angles_.y);
-			if (fabsf(diff) > AsoUtility::Deg2RadF(2.5f))
+			if (fabsf(diff) > AsoUtility::Deg2RadF(5.0f))
 			{
 				float a = AsoUtility::DirNearAroundRad(angles_.y, rotRad);
 				angles_.y += rotSpeed * (float)a;
