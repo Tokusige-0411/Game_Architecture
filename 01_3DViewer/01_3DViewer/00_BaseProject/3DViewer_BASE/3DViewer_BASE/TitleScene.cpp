@@ -6,6 +6,7 @@
 #include "Charactor.h"
 #include "Camera.h"
 #include "RollBall.h"
+#include "Enemy.h"
 
 TitleScene::TitleScene(SceneManager* manager) : SceneBase(manager)
 {
@@ -17,6 +18,7 @@ TitleScene::TitleScene(SceneManager* manager) : SceneBase(manager)
 	mSceneManager->GetCamera()->SetUnit(charactor_.get());
 
 	ball_ = std::make_shared<RollBall>(manager, charactor_.get());
+	enemy_ = std::make_shared<Enemy>(manager, charactor_.get());
 }
 
 void TitleScene::Init(void)
@@ -33,6 +35,7 @@ void TitleScene::Update(void)
 	stage_->Update();
 	charactor_->Update();
 	ball_->Update();
+	enemy_->Update();
 }
 
 void TitleScene::Draw(void)
@@ -40,6 +43,7 @@ void TitleScene::Draw(void)
 	stage_->Draw();
 	charactor_->Draw();
 	ball_->Draw();
+	enemy_->Draw();
 }
 
 void TitleScene::Release(void)

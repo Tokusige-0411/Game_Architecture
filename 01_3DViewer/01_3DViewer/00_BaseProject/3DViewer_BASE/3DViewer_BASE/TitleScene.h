@@ -5,6 +5,7 @@ class SceneManager;
 class Stage;
 class Charactor;
 class RollBall;
+class Enemy;
 
 class TitleScene : public SceneBase
 {
@@ -20,4 +21,5 @@ private:
 	std::unique_ptr<Stage> stage_;
 	std::shared_ptr<Charactor> charactor_;
 	std::shared_ptr<RollBall> ball_;
+	std::shared_ptr<Enemy> enemy_;
 };

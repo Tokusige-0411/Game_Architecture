@@ -49,6 +49,10 @@ void Charactor::Update(void)
 				float a = AsoUtility::DirNearAroundRad(angles_.y, rotRad);
 				angles_.y += rotSpeed * (float)a;
 			}
+			else
+			{
+
+			}
 
 			// ƒJƒƒ‰‚ÌŒü‚«‚ÉˆÚ“®
 			rotRad -= AsoUtility::Deg2RadF(90.0f);

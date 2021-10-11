@@ -15,8 +15,11 @@ public:
 
 private:
 	SceneManager* mSceneManager;
-
+	
+	int modelID_;
 	Charactor* chara_;
 	VECTOR pos_;
+	VECTOR angles_;
+	VECTOR localAngles_;
 };
 
