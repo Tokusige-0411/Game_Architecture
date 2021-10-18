@@ -1,5 +1,6 @@
 #pragma once
 #include "DxLib.h"
+#include "Quaternion.h"
 
 class SceneManager;
 
@@ -12,6 +13,7 @@ public:
 	{
 		Vector,
 		Matrix,
+		Quaternion,
 		Max,
 	};
 
@@ -23,6 +25,8 @@ public:
 	void SetModelVector(void);
 
 	void SetModelMatrix(void);
+
+	void SetModelQuaternion(void);
 
 	void DrawDirection(void);
 
@@ -43,5 +47,7 @@ private:
 	MATRIX matRot_;
 	MATRIX matRotLocal_;
 	MATRIX matTrn_;
+
+	Quaternion quaRotLocal_;
 };
 
