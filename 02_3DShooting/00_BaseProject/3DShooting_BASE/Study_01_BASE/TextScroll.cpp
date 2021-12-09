@@ -1,5 +1,6 @@
 #include <DxLib.h>
 #include "TextScroll.h"
+#include "SceneManager.h"
 
 TextScroll::TextScroll(SceneManager* manager)
 {
@@ -32,35 +33,56 @@ void TextScroll::Update(void)
 {
 	auto infos = textMap_[type_];
 
-	for (auto& info : infos)
-	{
-
-	}
+	//for (auto& info : infos)
+	//{
+	//	info.pos.x += m_speed * sceneManager_->GetDeltaTime();
+	//}
 }
 
 void TextScroll::Draw(void)
 {
 	auto infos = textMap_[type_];
 
-	VECTOR pos;
+	VECTOR pos = {0.0f, 0.0f, 0.0f};
 	for (auto& info : infos)
 	{
 		for (auto& msg : info.message)
 		{
-			DrawBillboard3D(pos, 0.5f, 0.5f, 20.0f, 0.0f, imageH_[msg], true);
+			DrawBillboard3D(info.pos, 0.5f, 0.5f, 20.0f, 0.0f, imageH_[msg], true);
 		}
 	}
 }
 
-void TextScroll::DrawGrid(void)
-{
-}
-
 void TextScroll::Release(void)
 {
+	for (int i = 0; i < m_num; i++)
+	{
+		DeleteGraph(imageH_[i]);
+	}
 }
 
 MsgInfo TextScroll::MakeMsgInfo(std::string msg, int mapCount)
 {
-	return MsgInfo();
+	MsgInfo ret;
+
+	std::vector<int> messages;
+
+	int ascii;
+	int len = msg.size();
+	for (int i = 0; i < len; i++)
+	{
+		ascii = msg.at(i);
+
+		if (ascii == 32)
+		{
+			ascii = 52;
+		}
+
+		messages.push_back(ascii);
+	}
+
+	ret.pos = { 0.0f, 0.0f, 0.0f };
+	ret.message = messages;
+
+	return ret;
 }

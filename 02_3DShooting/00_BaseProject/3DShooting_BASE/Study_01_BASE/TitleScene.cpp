@@ -6,6 +6,7 @@
 #include "TitleScene.h"
 #include "SpaceDome.h"
 #include "ParticleGenerator.h"
+#include "TextScroll.h"
 
 TitleScene::TitleScene(SceneManager* manager) : SceneBase(manager)
 {
@@ -22,6 +23,9 @@ void TitleScene::Init(void)
 	particleGenerator_->Init();
 
 	mSceneManager->GetCamera()->ChangeMode(Camera::MODE::FREE);
+
+	textScroll_ = new TextScroll(mSceneManager);
+	textScroll_->Init();
 }
 
 void TitleScene::Update(void)
@@ -34,13 +38,14 @@ void TitleScene::Update(void)
 	}
 
 	particleGenerator_->Update();
-
+	textScroll_->Update();
 }
 
 void TitleScene::Draw(void)
 {
 	spaceDome_->Draw();
 	particleGenerator_->Draw();
+	textScroll_->Draw();
 	// ƒƒS•`‰æ
 	DrawLogo();
 }
@@ -66,7 +71,13 @@ void TitleScene::DrawLogo(void)
 
 void TitleScene::Release(void)
 {
-
 	DeleteGraph(mImgStartLogo);
 	spaceDome_->Release();
+	delete spaceDome_;
+
+	particleGenerator_->Release();
+	delete particleGenerator_;
+
+	textScroll_->Release();
+	delete textScroll_;
 }

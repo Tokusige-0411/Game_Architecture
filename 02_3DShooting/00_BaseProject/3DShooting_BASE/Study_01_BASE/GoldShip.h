@@ -1,10 +1,12 @@
 #pragma once
+#include <vector>
 #include "Transform.h"
 
 class SceneManager;
 class SpriteAnimator;
 class SpeechBalloon;
 class ParticleGenerator;
+class PlayerShot;
 
 enum class PlayerState
 {
@@ -28,6 +30,7 @@ public:
 
 	void ProcessTurn(void);
 	void Turn(float deg, VECTOR axis);
+	void ProcessShot(void);
 
 	Transform* GetTransform(void);
 
@@ -38,9 +41,12 @@ public:
 
 	SpeechBalloon* GetSpeechBalloon(void);
 
+	std::vector<PlayerShot*> GetPlayerShot(void);
+
 private:
 
 	SceneManager* sceneManager_;
+
 	// ÉÇÉfÉãêßå‰ÇÃäÓñ{èÓïÒ
 	Transform transform_;
 
@@ -53,4 +59,10 @@ private:
 	SpeechBalloon* sBalloon_;
 
 	ParticleGenerator* particleGenerator_;
+
+	std::vector<PlayerShot*> playerShots_;
+
+	float deleyShot_;
+
+	void CreateShot(void);
 };

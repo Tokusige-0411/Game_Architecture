@@ -1,7 +1,6 @@
 #include <DxLib.h>
 #include <algorithm>
 #include "ParticleGenerator.h"
-#include "Quaternion.h"
 #include "AsoUtility.h"
 #include "Particle.h"
 #include "SceneManager.h"
@@ -163,7 +162,7 @@ Particle* ParticleGenerator::Generate(Particle* particle)
 	float speed = gen_min_speed + GetRand(gen_max_speed - gen_min_speed);
 	float lifeTime = gen_min_life_time + GetRand(gen_max_life_time - gen_min_life_time);
 
-	particle->Generate(pos, size, dir, speed, 10.0f);
+	particle->Generate(pos, size, dir, speed, lifeTime);
 
 	return particle;
 }
@@ -184,6 +183,8 @@ void ParticleGenerator::CreateSquareVertex(void)
 	square_[3].pos = { 100.0f, 0.0f, 0.0f };
 	square_[4].pos = { 0.0f, 0.0f, 100.0f };
 	square_[5].pos = { 100.0f, 0.0f, 100.0f };
+
+
 }
 
 void ParticleGenerator::CreateCircleVertex(void)

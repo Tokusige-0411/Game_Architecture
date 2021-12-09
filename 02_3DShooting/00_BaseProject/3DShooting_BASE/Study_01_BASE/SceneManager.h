@@ -2,6 +2,7 @@
 #include <chrono>
 #include "TitleScene.h"
 #include "GameScene.h"
+
 class SceneBase;
 class Fader;
 class Camera;
@@ -20,7 +21,7 @@ public:
 		TITLE,
 		GAME,
 		EVENT,
-		BATTLE
+		BATTLE,
 	};
 
 	void Init(void);

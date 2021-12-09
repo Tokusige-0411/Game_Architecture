@@ -21,6 +21,8 @@ public:
 
 	static constexpr int chip_size = 32;
 
+	static constexpr float m_speed = 5.0f;
+
 	enum class Type
 	{
 		Title
@@ -31,7 +33,6 @@ public:
 	void Init(void);
 	void Update(void);
 	void Draw(void);
-	void DrawGrid(void);
 	void Release(void);
 
 private:

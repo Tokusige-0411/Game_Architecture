@@ -3,6 +3,7 @@
 
 class SpaceDome;
 class ParticleGenerator;
+class TextScroll;
 
 class TitleScene : public SceneBase
 {
@@ -21,5 +22,6 @@ private:
 	int mImgStartLogo;
 	SpaceDome* spaceDome_;
 	ParticleGenerator* particleGenerator_;
+	TextScroll* textScroll_;
 };
 

@@ -10,7 +10,9 @@ namespace
 	constexpr float moveSpeed = 30.0f;
 	constexpr float rotSpeed = 2.0f;
 	constexpr float powSpring = 24.0f;
-	constexpr float shake_time = 0.2f;
+	constexpr float shake_time = 2.0f;
+	constexpr float width_shake = 3.0f;
+	constexpr float shake_speed = 30.0f;
 }
 
 Camera::Camera(SceneManager* manager)
@@ -105,6 +107,9 @@ void Camera::SetBeforeDraw(void)
 	case Camera::MODE::FOLLOW_SPRING:
 		SetBeforeDrawFollowSpring();
 		break;
+	case Camera::MODE::SHAKE:
+		SetBeforeDrawShake();
+		break;
 	default:
 		break;
 	}
@@ -129,6 +134,7 @@ void Camera::SetBeforeDrawFree(void)
 
 void Camera::SetBeforeDrawFixed(void)
 {
+	int a = 0;
 }
 
 void Camera::SetBeforeDrawFollow(void)
@@ -172,6 +178,22 @@ void Camera::SetBeforeDrawFollowSpring(void)
 	mTargetPos = VAdd(mPos, target);
 
 	mCameraUp = shipRot.GetUp();
+}
+
+void Camera::SetBeforeDrawShake(void)
+{
+	stepShake_ -= mSceneManager->GetDeltaTime();
+
+	if (stepShake_ < 0.0f)
+	{
+		mPos = defaultPos;
+		ChangeMode(MODE::FIXED);
+		return;
+	}
+
+	float pow = width_shake * sinf(stepShake_ * shake_speed);
+	auto vel = VScale(shakeDir_, pow);
+	mPos = VAdd(defaultPos, vel);
 }
 
 void Camera::Draw()

@@ -46,8 +46,7 @@ public:
 	void SetBeforeDrawFixed(void);
 	void SetBeforeDrawFollow(void);
 	void SetBeforeDrawFollowSpring(void);
-	void SetBeforeDrawFollowSpring(void);
-
+	void SetBeforeDrawShake(void);
 
 	void Draw(void);
 	void DrawDebug(void);

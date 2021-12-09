@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "SceneBase.h"
+
 class SceneManager;
 class SpaceDome;
 class Stage;

@@ -6,6 +6,7 @@
 #include "ResourceManager.h"
 #include "SpeechBalloon.h"
 #include "ParticleGenerator.h"
+#include "PlayerShot.h"
 
 namespace
 {
@@ -13,6 +14,8 @@ namespace
 
 	constexpr float speedRotX = 1.0f;
 	constexpr float speedRotY = 1.0f;
+
+	constexpr float shot_delay_time = 0.2f;
 }
 
 GoldShip::GoldShip(SceneManager* manager)
@@ -44,11 +47,14 @@ void GoldShip::Init(void)
 	animator_ = new SpriteAnimator(sceneManager_, ResourceManager::SRC::SHIP_EXPLOSION, 20.0f, 8.0f);
 
 	sBalloon_ = new SpeechBalloon(sceneManager_, SpeechBalloon::TYPE::SPEECH, &transform_);
-	sBalloon_->SetText("あげません！！");
-	sBalloon_->SetTime(15.0);
+	sBalloon_->SetText("追って！！");
+	sBalloon_->SetTime(15.0f);
 	sBalloon_->SetRelativePos({15.0f, 15.0f, 0.0f});
 
 	particleGenerator_ = new ParticleGenerator(sceneManager_, transform_.pos, 12.0f);
+	particleGenerator_->Init();
+
+
 }
 
 void GoldShip::Update(void)
@@ -66,13 +72,13 @@ void GoldShip::Update(void)
 	}
 
 	transform_.Update();
-
-	particleGenerator_->Update();
 }
 
 void GoldShip::UpdateNormal(void)
 {
 	ProcessTurn();
+
+	ProcessShot();
 
 	VECTOR forward = transform_.GetForward();
 	transform_.pos = VAdd(transform_.pos, VScale(forward, speed));
@@ -87,6 +93,8 @@ void GoldShip::UpdateNormal(void)
 	rot = rot.Mult(axis);
 
 	particleGenerator_->SetRot(rot);
+
+	particleGenerator_->Update();
 }
 
 void GoldShip::UpdateDestroy(void)
@@ -113,13 +121,25 @@ void GoldShip::Draw(void)
 	default:
 		break;
 	}
-
 }
 
 void GoldShip::Release(void)
 {
 	particleGenerator_->Release();
 	delete particleGenerator_;
+
+	animator_->Release();
+	delete animator_;
+
+	sBalloon_->Release();
+	delete sBalloon_;
+
+	for (auto& s : playerShots_)
+	{
+		s->Release();
+		delete s;
+	}
+	playerShots_.clear();
 }
 
 void GoldShip::ProcessTurn(void)
@@ -135,6 +155,22 @@ void GoldShip::Turn(float deg, VECTOR axis)
 	float rad = AsoUtility::Deg2RadF(deg);
 	Quaternion tmpQ = Quaternion::AngleAxis(rad, axis);
 	transform_.quaRot = transform_.quaRot.Mult(tmpQ);
+}
+
+void GoldShip::ProcessShot(void)
+{
+	deleyShot_ -= sceneManager_->GetDeltaTime();
+	if (deleyShot_ <= 0.0f)
+	{
+		deleyShot_ = 0.0f;
+	}
+
+	if (CheckHitKey(KEY_INPUT_N) && deleyShot_ <= 0.0f)
+	{
+		deleyShot_ = shot_delay_time;
+
+		CreateShot();
+	}
 }
 
 Transform* GoldShip::GetTransform(void)
@@ -164,4 +200,29 @@ bool GoldShip::IsDestoy(void)
 SpeechBalloon* GoldShip::GetSpeechBalloon(void)
 {
 	return sBalloon_;
+}
+
+std::vector<PlayerShot*> GoldShip::GetPlayerShot(void)
+{
+	return playerShots_;
+}
+
+void GoldShip::CreateShot(void)
+{
+	bool isCreate = false;
+	for (auto& s : playerShots_)
+	{
+		if (!(s->IsAlive()))
+		{
+			s->Create(transform_.pos, transform_.GetForward());
+			isCreate = true;
+		}
+	}
+
+	if (!isCreate)
+	{
+		PlayerShot* newShot = new PlayerShot(sceneManager_, &transform_);
+		newShot->Create(transform_.pos, transform_.GetForward());
+		playerShots_.emplace_back(newShot);
+	}
 }

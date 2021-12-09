@@ -49,6 +49,7 @@ void GameScene::Update(void)
 				playerShip_->ChangeState(PlayerState::Destroy);
 				mSceneManager->GetCamera()->ChangeMode(Camera::MODE::FOLLOW);
 			}
+			MV1CollResultPolyDimTerminate(info);
 		}
 	}
 	else

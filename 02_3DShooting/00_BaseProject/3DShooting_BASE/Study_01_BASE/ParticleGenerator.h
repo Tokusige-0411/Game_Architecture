@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <vector>
+#include "Quaternion.h"
 
 class SceneManager;
 class Particle;
@@ -8,7 +9,6 @@ class Particle;
 class ParticleGenerator
 {
 public:
-
 	ParticleGenerator(SceneManager* manager, VECTOR pos, float radius);
 	void Init(void);
 	void Update(void);
