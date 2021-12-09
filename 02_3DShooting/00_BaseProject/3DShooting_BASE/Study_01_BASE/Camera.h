@@ -20,6 +20,7 @@ public:
 		FIXED,
 		FOLLOW,
 		FOLLOW_SPRING,
+		SHAKE,
 		MAX
 	};
 
@@ -44,6 +45,7 @@ public:
 	void SetBeforeDrawFree(void);
 	void SetBeforeDrawFixed(void);
 	void SetBeforeDrawFollow(void);
+	void SetBeforeDrawFollowSpring(void);
 	void SetBeforeDrawFollowSpring(void);
 
 
@@ -83,5 +85,9 @@ private:
 	VECTOR mCameraUp;
 
 	VECTOR mVelocity;
+
+	float stepShake_;
+	VECTOR shakeDir_;
+	VECTOR defaultPos;
 };
 

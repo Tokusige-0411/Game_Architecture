@@ -1,13 +1,29 @@
 #include <DxLib.h>
+#include <algorithm>
 #include "ParticleGenerator.h"
 #include "Quaternion.h"
 #include "AsoUtility.h"
 #include "Particle.h"
+#include "SceneManager.h"
+#include "Camera.h"
 
 namespace
 {
+	constexpr int particle_num = 30;
+
 	constexpr float poligon_vertex_num = 10.0f;
 	constexpr float split_angle = 360.0f / poligon_vertex_num;
+
+	constexpr float gen_min_size = 3.0f;
+	constexpr float gen_max_size = 5.0f;
+
+	constexpr float gen_min_speed = 1.0f;
+	constexpr float gen_max_speed = 2.0f;
+
+	constexpr float gen_min_life_time = 1.0f;
+	constexpr float gen_max_life_time = 2.0f;
+
+	constexpr float gen_sec = 0.05f;
 }
 
 ParticleGenerator::ParticleGenerator(SceneManager* manager, VECTOR pos, float radius)
@@ -16,36 +32,73 @@ ParticleGenerator::ParticleGenerator(SceneManager* manager, VECTOR pos, float ra
 	pos_ = pos;
 	radius_ = radius;
 	lightH_ = LoadGraph("Image/Light.png");
-
-	for (auto& p : particle_)
-	{
-		p = Generate(p);
-	}
 }
 
 void ParticleGenerator::Init(void)
 {
 	CreateSquareVertex();
 	CreateCircleVertex();
+
+	for (int i = 0; i < particle_num; i++)
+	{
+		particle_.emplace_back(new Particle(sceneManager_, lightH_));
+	}
+	stepGenetare_ = gen_sec;
 }
 
 void ParticleGenerator::Update(void)
 {
+	bool isGenerate = false;
+	stepGenetare_ -= sceneManager_->GetDeltaTime();
+	if (stepGenetare_ < 0.0f)
+	{
+		isGenerate = true;
+	}
+
 	for (auto& p : particle_)
 	{
 		p->Update();
+
+		if (!p->isAlive())
+		{
+			if (isGenerate)
+			{
+				p = Generate(p);
+				stepGenetare_ = gen_sec;
+				isGenerate = false;
+			}
+		}
 	}
 }
 
 void ParticleGenerator::Draw(void)
 {
-	DrawBillboard3D(pos_, 0.5f, 0.5f, 100.0f, 0.0f, lightH_, true);
+	auto camera = sceneManager_->GetCamera();
+	auto c2t = camera->GetDir();
+
+	VECTOR c2p;
+	for (auto& p : particle_)
+	{
+		c2p = VSub(p->GetPos(), camera->GetPos());
+
+		p->SetZLen(VDot(c2t, c2p));
+	}
+
+	std::sort(particle_.begin(), particle_.end(),
+		[](Particle* x, Particle* y) {
+			return x->GetZLen() > y->GetZLen();
+		}
+	);
+
+	//DrawBillboard3D(pos_, 0.5f, 0.5f, 100.0f, 0.0f, lightH_, true);
+	//DrawMeshSquare();
+	//DrawMeshCIrcle();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
 	for (auto& p : particle_)
 	{
 		p->Draw();
 	}
-	DrawMeshSquare();
-	DrawMeshCIrcle();
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void ParticleGenerator::DrawMeshSquare(void)
@@ -61,6 +114,22 @@ void ParticleGenerator::DrawMeshCIrcle(void)
 void ParticleGenerator::Release(void)
 {
 	DeleteGraph(lightH_);
+
+	for (auto& p : particle_)
+	{
+		p->Release();
+		delete p;
+	}
+}
+
+void ParticleGenerator::SetPos(VECTOR pos)
+{
+	pos_ = pos;
+}
+
+void ParticleGenerator::SetRot(Quaternion rot)
+{
+	quaRot_ = rot;
 }
 
 Particle* ParticleGenerator::Generate(Particle* particle)
@@ -70,19 +139,29 @@ Particle* ParticleGenerator::Generate(Particle* particle)
 		particle = new Particle(sceneManager_, lightH_);
 	}
 
-	VECTOR pos;
-	Quaternion pTmp = Quaternion::AngleAxis(AsoUtility::Deg2RadF(GetRand(360)), AsoUtility::AXIS_Y);
-	pos = VAdd(pTmp.PosAxis(pTmp, { 0.0f, 0.0f, static_cast<float>(GetRand(radius_)) }), pos_);
+	VECTOR pos = {0, 0, 0};
+	Quaternion rotY = Quaternion::AngleAxis(AsoUtility::Deg2RadF(GetRand(360.0f)), AsoUtility::AXIS_Y);
+	
+	rotY = quaRot_.Mult(rotY);
 
-	VECTOR dir;
-	float deg = 60 + GetRand(80 - 60);
+	float min = radius_ * (3.0f / 4.0f);
+
+
+	pos = VAdd(rotY.PosAxis(rotY, { 0.0f, 0.0f, min + static_cast<float>(GetRand(radius_ - min)) }), pos_);
+
+
+	VECTOR dir = {0, 0, 0};
+
+	float deg = 30 + GetRand(40 - 30);
 	deg *= -1.0f;
-	Quaternion dTmp = Quaternion::AngleAxis(AsoUtility::Deg2RadF(deg), AsoUtility::AXIS_X);
-	dTmp = pTmp.Mult(dTmp);
-	dir = dTmp.GetForward();
 
-	float size = GetRand(8) + 2;
-	float speed = GetRand(3) + 1;
+	Quaternion rotX = Quaternion::AngleAxis(AsoUtility::Deg2RadF(deg), AsoUtility::AXIS_X);
+	rotX = rotY.Mult(rotX);
+	dir = rotX.GetForward();
+
+	float size = gen_min_size + GetRand(gen_max_size - gen_min_size);
+	float speed = gen_min_speed + GetRand(gen_max_speed - gen_min_speed);
+	float lifeTime = gen_min_life_time + GetRand(gen_max_life_time - gen_min_life_time);
 
 	particle->Generate(pos, size, dir, speed, 10.0f);
 

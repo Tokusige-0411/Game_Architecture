@@ -10,6 +10,7 @@ namespace
 	constexpr float moveSpeed = 30.0f;
 	constexpr float rotSpeed = 2.0f;
 	constexpr float powSpring = 24.0f;
+	constexpr float shake_time = 0.2f;
 }
 
 Camera::Camera(SceneManager* manager)
@@ -153,12 +154,11 @@ void Camera::SetBeforeDrawFollowSpring(void)
 
 	VECTOR pos = shipRot.PosAxis(RELATIVE_CAMERA_SPRING);
 
-	VECTOR idealPos = VAdd(shipPos, pos);
-
-	VECTOR diff = VSub(mPos, idealPos);
-
 	float dampening = 2.0f * sqrt(powSpring);
 	float delta = mSceneManager->GetDeltaTime();
+
+	VECTOR idealPos = VAdd(shipPos, pos);
+	VECTOR diff = VSub(mPos, idealPos);
 
 	VECTOR force;
 	force = VScale(diff, -powSpring);
@@ -244,6 +244,11 @@ void Camera::ChangeMode(MODE mode)
 	case Camera::MODE::FOLLOW:
 		break;
 	case Camera::MODE::FOLLOW_SPRING:
+		break;
+	case Camera::MODE::SHAKE:
+		stepShake_ = shake_time;
+		shakeDir_ = VNorm({0.7f, 0.7f, 0.7});
+		defaultPos = mPos;
 		break;
 	default:
 		break;

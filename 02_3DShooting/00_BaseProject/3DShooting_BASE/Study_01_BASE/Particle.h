@@ -12,6 +12,13 @@ public:
 	void Draw(void);
 	void Release(void);
 
+	VECTOR GetPos(void);
+
+	float GetZLen(void);
+	void SetZLen(float zl);
+
+	bool isAlive(void);
+
 private:
 	//Transform transform_;
 
@@ -23,5 +30,7 @@ private:
 	float size_;
 	float speed_;
 	float lifeTime_;
+
+	float zLen_;
 };
 

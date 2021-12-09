@@ -23,7 +23,12 @@ void Particle::Init(void)
 
 void Particle::Update(void)
 {
-	pos_ = VAdd(pos_, VScale(dir_, speed_));
+	pos_ = VAdd(pos_, VScale(dir_, speed_ * sceneManager_->GetDeltaTime()));
+
+	if (lifeTime_ > 0.0f)
+	{
+		lifeTime_ -= sceneManager_->GetDeltaTime();
+	}
 }
 
 void Particle::Draw(void)
@@ -33,4 +38,24 @@ void Particle::Draw(void)
 
 void Particle::Release(void)
 {
+}
+
+VECTOR Particle::GetPos(void)
+{
+	return pos_;
+}
+
+float Particle::GetZLen(void)
+{
+	return zLen_;
+}
+
+void Particle::SetZLen(float zl)
+{
+	zLen_ = zl;
+}
+
+bool Particle::isAlive(void)
+{
+	return lifeTime_ > 0.0f;
 }

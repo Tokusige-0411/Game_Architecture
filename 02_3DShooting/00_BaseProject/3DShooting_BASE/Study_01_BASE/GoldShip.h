@@ -4,6 +4,7 @@
 class SceneManager;
 class SpriteAnimator;
 class SpeechBalloon;
+class ParticleGenerator;
 
 enum class PlayerState
 {
@@ -50,4 +51,6 @@ private:
 	bool isDestroy_;
 
 	SpeechBalloon* sBalloon_;
+
+	ParticleGenerator* particleGenerator_;
 };

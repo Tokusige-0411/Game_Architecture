@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <vector>
 
 class SceneManager;
 class Particle;
@@ -16,11 +17,13 @@ public:
 	void DrawMeshCIrcle(void);
 	void Release(void);
 
-private:
-	Particle* Generate(Particle* particle);
+	void SetPos(VECTOR pos);
+	void SetRot(Quaternion rot);
 
+private:
 	SceneManager* sceneManager_;
 	VECTOR pos_;
+	Quaternion quaRot_;
 
 	float radius_;
 
@@ -32,9 +35,11 @@ private:
 	std::array<WORD, 30> circleIndex_;
 
 	int lightH_;
+	float stepGenetare_;
 
-	std::array<Particle*, 20> particle_;
+	std::vector<Particle*> particle_;
 
+	Particle* Generate(Particle* particle);
 	void CreateSquareVertex(void);
 	void CreateCircleVertex(void);
 

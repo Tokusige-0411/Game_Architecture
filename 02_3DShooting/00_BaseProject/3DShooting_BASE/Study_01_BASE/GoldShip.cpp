@@ -5,6 +5,7 @@
 #include "SpriteAnimator.h"
 #include "ResourceManager.h"
 #include "SpeechBalloon.h"
+#include "ParticleGenerator.h"
 
 namespace
 {
@@ -46,6 +47,8 @@ void GoldShip::Init(void)
 	sBalloon_->SetText("‚ ‚°‚Ü‚¹‚ñII");
 	sBalloon_->SetTime(15.0);
 	sBalloon_->SetRelativePos({15.0f, 15.0f, 0.0f});
+
+	particleGenerator_ = new ParticleGenerator(sceneManager_, transform_.pos, 12.0f);
 }
 
 void GoldShip::Update(void)
@@ -63,6 +66,8 @@ void GoldShip::Update(void)
 	}
 
 	transform_.Update();
+
+	particleGenerator_->Update();
 }
 
 void GoldShip::UpdateNormal(void)
@@ -71,6 +76,17 @@ void GoldShip::UpdateNormal(void)
 
 	VECTOR forward = transform_.GetForward();
 	transform_.pos = VAdd(transform_.pos, VScale(forward, speed));
+
+	particleGenerator_->SetPos(VAdd(transform_.pos, VScale(transform_.GetForward(), 30.0f)));
+
+	auto rot = transform_.quaRot;
+	Quaternion axis;
+	axis = Quaternion::AngleAxis(AsoUtility::Deg2RadD(180.0), AsoUtility::AXIS_Y);
+	rot = rot.Mult(axis);
+	axis = Quaternion::AngleAxis(AsoUtility::Deg2RadD(90.0), AsoUtility::AXIS_X);
+	rot = rot.Mult(axis);
+
+	particleGenerator_->SetRot(rot);
 }
 
 void GoldShip::UpdateDestroy(void)
@@ -89,6 +105,7 @@ void GoldShip::Draw(void)
 	{
 	case PlayerState::Normal:
 		MV1DrawModel(transform_.modelId);
+		particleGenerator_->Draw();
 		break;
 	case PlayerState::Destroy:
 		animator_->Draw();
@@ -101,6 +118,8 @@ void GoldShip::Draw(void)
 
 void GoldShip::Release(void)
 {
+	particleGenerator_->Release();
+	delete particleGenerator_;
 }
 
 void GoldShip::ProcessTurn(void)
