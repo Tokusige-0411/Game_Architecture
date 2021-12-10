@@ -134,7 +134,8 @@ void Camera::SetBeforeDrawFree(void)
 
 void Camera::SetBeforeDrawFixed(void)
 {
-	int a = 0;
+	SetCameraNearFar(30.0f, 15000.0f);
+	SetCameraPositionAndTargetAndUpVec(mPos, mTargetPos, mCameraUp);
 }
 
 void Camera::SetBeforeDrawFollow(void)

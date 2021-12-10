@@ -9,7 +9,7 @@ bool Application::Init(void)
 {
 
 	// システム処理
-	SetWindowText("Project");
+	SetWindowText("1916027_徳重虎大朗");
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
 	ChangeWindowMode(true);
 	if (DxLib_Init() == -1)

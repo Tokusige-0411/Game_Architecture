@@ -22,10 +22,10 @@ void BossShip::Init(void)
 		AsoUtility::Deg2RadF(210.0f), 
 		AsoUtility::Deg2RadF(20.0f)
 	);
-	transform_.quaRot = Quaternion::Euler(
-		AsoUtility::Deg2RadF(0.0f),
+	transform_.quaRotLocal = Quaternion::Euler(
+		0.0f,
 		AsoUtility::Deg2RadF(180.0f),
-		AsoUtility::Deg2RadF(0.0f)
+		0.0f
 	);
 
 	transform_.Update();

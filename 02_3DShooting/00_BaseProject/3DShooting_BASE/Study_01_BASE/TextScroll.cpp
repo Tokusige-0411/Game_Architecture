@@ -2,6 +2,12 @@
 #include "TextScroll.h"
 #include "SceneManager.h"
 
+namespace
+{
+	constexpr float msg_diff_z = -30.0f;
+	constexpr float msg_diff_x = 20.0f;
+}
+
 TextScroll::TextScroll(SceneManager* manager)
 {
 	sceneManager_ = manager;
@@ -23,32 +29,40 @@ void TextScroll::Init(void)
 
 	std::vector<MsgInfo> info;
 
-	info.push_back(MakeMsgInfo("Hello", info.size()));
-	info.push_back(MakeMsgInfo("World", info.size()));
+	info.emplace_back(MakeMsgInfo("Hello", info.size()));
+	info.emplace_back(MakeMsgInfo("World", info.size()));
 
 	textMap_.emplace(type_, info);
+	int count = 0;
+	for (auto& text : textMap_[type_])
+	{
+		text.pos.z = -400 + count * msg_diff_z;
+		count++;
+	}
 }
 
 void TextScroll::Update(void)
 {
-	auto infos = textMap_[type_];
+	auto& infos = textMap_[type_];
 
-	//for (auto& info : infos)
-	//{
-	//	info.pos.x += m_speed * sceneManager_->GetDeltaTime();
-	//}
+	for (auto& info : infos)
+	{
+		info.pos.z = info.pos.z + (m_speed * sceneManager_->GetDeltaTime());
+	}
 }
 
 void TextScroll::Draw(void)
 {
-	auto infos = textMap_[type_];
+	auto& infos = textMap_[type_];
 
-	VECTOR pos = {0.0f, 0.0f, 0.0f};
 	for (auto& info : infos)
 	{
+		int count = 0;
 		for (auto& msg : info.message)
 		{
+			info.pos.x = -100 + count * msg_diff_x;
 			DrawBillboard3D(info.pos, 0.5f, 0.5f, 20.0f, 0.0f, imageH_[msg], true);
+			count++;
 		}
 	}
 }
@@ -73,9 +87,25 @@ MsgInfo TextScroll::MakeMsgInfo(std::string msg, int mapCount)
 	{
 		ascii = msg.at(i);
 
+		if (ascii >= 65 && ascii <= 90)
+		{
+			ascii = ascii - 65;
+		}
+		if (ascii >= 97 && ascii <= 122)
+		{
+			ascii = ascii - 97;
+		}
 		if (ascii == 32)
 		{
 			ascii = 52;
+		}
+		if (ascii == 46)
+		{
+			ascii = 53;
+		}
+		if (ascii == 44)
+		{
+			ascii = 54;
 		}
 
 		messages.push_back(ascii);
